@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<project default="war" basedir=".">
+        <echo message="pulling in property files" /> <property file="build.properties" />
+        <property name="project.name" value="ssh_car_park" />
+        <property name="package.name" value="${project.name}.war" />
+        <property name="dist.war.dir" value="./targets" />
+        <property name="src.dir" value="src" />
+        <property name="webcontent.dir" value="./WebContent" />
+        <property name="webcontent.webinf.dir" value="${webcontent.dir}/WEB-INF" />
+        <property name="webcontent.webinf.classes.dir" value="${webcontent.webinf.dir}/classes" />
+        <property name="webcontent.webinf.lib.dir" value="${webcontent.webinf.dir}/lib" />
+        <property name="source.version" value="1.8" />
+        <property name="target.version" value="1.8" />
+        <property name="webxml.path" value="${webcontent.webinf.dir}/web.xml" />
+        
+        <path id="classpath">
+		<fileset dir="${webcontent.webinf.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${webcontent.webinf.classes.dir} " />
+	</path>
+
+       <target name="init">
+            <echo message="删除targets目录(war包输出目录)" />
+            <delete dir="${dist.war.dir}" />
+            <echo message="创建targets目录(war包输出目录)" />
+            <mkdir dir="${dist.war.dir}" />
+            <echo message="创建classes目录" />
+            <mkdir dir="${webcontent.webinf.classes.dir}" />
+       </target>
+
+       
+	<target name="compile" depends="init">
+		<echo message="使用指定的classpath编译源代码,输出到classes目录" />
+		<javac encoding="utf-8" listfiles="true" srcdir="${src.dir}"
+			destdir="${webcontent.webinf.classes.dir}" debug="on" deprecation="false"
+			optimize="true" failonerror="true" source="${source.version}" target="${target.version}">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+       <target name="war" depends="compile" description="将工程打成 war 包">
+            <echo message="生成war包" />
+            <delete file="${dist.war.dir}/${package.name}" />
+            <war warfile="${dist.war.dir}/${package.name}" webxml="${webxml.path}">
+                  <fileset dir="${webcontent.dir}">
+                  </fileset>
+            </war>
+       </target>
+</project>
